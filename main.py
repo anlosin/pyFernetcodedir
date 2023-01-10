@@ -1,3 +1,4 @@
+import datetime
 import os
 import fernet
 # import unicode
@@ -15,7 +16,6 @@ class SecMod:
             if os.path.isfile(file):
                 # 获取该路径下文件的list列表
                 self.files.append(file)
-            print(file)
 
     def encrypt(self):
         key = fernet.Fernet.generate_key()
@@ -25,10 +25,8 @@ class SecMod:
             with open(file, "rb") as thefile:
                 contents = thefile.read()
                 contents_encrypted = fernet.Fernet(key).encrypt(contents)
-                print(contents_encrypted)
             with open(file, "wb") as thefile:
                 thefile.write(contents_encrypted)
-            print(file)
 
     def decrypt(self):
         with open("file.key", "rb") as key:
@@ -43,5 +41,8 @@ class SecMod:
 
 
 if __name__ == '__main__':
+    starttime = datetime.datetime.now()
     sm = SecMod()
-    sm.decrypt()
+    sm.encrypt()
+    endtime = datetime.datetime.now()
+    print(endtime - starttime).seconds
