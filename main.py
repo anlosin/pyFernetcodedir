@@ -1,11 +1,10 @@
 import datetime
 import os
+import shutil
+import time
 from functools import partial
-
+from tempfile import TemporaryDirectory, NamedTemporaryFile
 from cryptography.fernet import Fernet
-
-
-# import unicode
 
 
 class SecMod:
@@ -27,11 +26,13 @@ class SecMod:
             thekey.write(key)
         for file in self.files:
             with open(file, "rb", buffering=0) as thefile:
+                _dir = TemporaryDirectory()
+                temp_file = NamedTemporaryFile(dir=_dir.name, mode='w+b')
                 start_time = datetime.datetime.now()
                 for chunk in chunked_file_reader(thefile):
-                    with open("a.avi", "ab+") as f:
-                        print(len(Fernet(key).encrypt(chunk)))
+                    with temp_file as f:
                         f.write(Fernet(key).encrypt(chunk))
+                shutil.copy(temp_file.name, file)
                 use_time = datetime.datetime.now() - start_time
                 print(use_time)
 
@@ -72,7 +73,8 @@ class SecMod:
             print(use_time)
 
 
-def chunked_file_reader(file, block_size=1398200):
+# def chunked_file_reader(file, block_size=1398200):
+def chunked_file_reader(file, block_size=1024 * 1024):
     """生成器函数：分块读取文件内容，使用 iter 函数
     """
     # 首先使用 partial(fp.read, block_size) 构造一个新的无需参数的函数
@@ -83,4 +85,4 @@ def chunked_file_reader(file, block_size=1398200):
 
 if __name__ == '__main__':
     sm = SecMod()
-    sm.decrypt()
+    sm.encrypt()
