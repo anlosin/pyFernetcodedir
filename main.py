@@ -31,6 +31,7 @@ class SecMod:
                 f.write(len(key).to_bytes(2, 'big'))
                 f.write(key)
                 for chunk in chunked_file_reader(t):
+                    # print(len(Fernet(key).encrypt(chunk)))
                     f.write(Fernet(key).encrypt(chunk))
                 shutil.copy(temp_dir.name + file, file)
         use_time = datetime.datetime.now() - start_time
@@ -48,8 +49,8 @@ class SecMod:
                 with open(file, "rb", buffering=0) as t, open(temp_dir.name + file, "ab+") as f:
                     # 通过文件头两位得知key长度，之后读取key并解密
                     key_len = t.read(2)
-                    right_key = t.read(int.from_bytes(key_len,'big'))
-                    for chunk in chunked_file_reader(t, block_size=5592504):
+                    right_key = t.read(int.from_bytes(key_len, 'big'))
+                    for chunk in chunked_file_reader(t, block_size=22369720):
                         f.write(Fernet(right_key).decrypt(chunk))
                     shutil.copy(temp_dir.name + file, file)
             use_time = datetime.datetime.now() - start_time
@@ -60,17 +61,21 @@ class SecMod:
             pass
 
 
-def chunked_file_reader(file, block_size=1024 * 1024 * 4):
+def chunked_file_reader(file, block_size=1024 * 1024 * 16):
     """生成器函数：分块读取文件内容，使用 iter 函数
     """
     # 首先使用 partial(fp.read, block_size) 构造一个新的无需参数的函数
     # 循环将不断返回 fp.read(block_size) 调用结果，直到其为 '' 时终止
     # 加密段每次读取1M 解密段每次需读取1398200字节
+    # 1 1398200
+    # 4 5592504
+    # 16 22369720
+    # 64 89478584
     for chunk in iter(partial(file.read, block_size), b''):
         yield chunk
 
 
 if __name__ == '__main__':
-    os.chdir(os.getcwd())
+    os.chdir("D:\\a")
     sm = SecMod()
-    sm.encrypt()
+    sm.decrypt()
