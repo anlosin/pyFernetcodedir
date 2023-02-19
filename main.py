@@ -78,4 +78,5 @@ def chunked_file_reader(file, block_size=1024 * 1024 * 16):
 if __name__ == '__main__':
     os.chdir("D:\\a")
     sm = SecMod()
+    sm.encrypt()
     sm.decrypt()
