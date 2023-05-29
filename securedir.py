@@ -3,19 +3,18 @@ import shutil
 from functools import partial
 from tempfile import TemporaryDirectory
 
-from cryptography.fernet import Fernet
+import cryptography
 
 
-class SecMod:
+class SecMod(cryptography):
     def __init__(self):
-        pass
+        super.__init__(self)
 
-    @staticmethod
-    def encrypt(file):
+    def encrypt(self, file):
         """
         加密文件
         """
-        key = Fernet.generate_key()
+        key = self.fernet.Fernet.generate_key()
         temp_dir = TemporaryDirectory()
         start_time = datetime.datetime.now()
         with open(file, "rb", buffering=0) as t, open(temp_dir.name + file, "ab+") as f:
@@ -23,13 +22,12 @@ class SecMod:
             f.write(len(key).to_bytes(2, 'big'))
             f.write(key)
             for chunk in chunked_file_reader(t):
-                f.write(Fernet(key).encrypt(chunk))
+                f.write(self.fernet.Fernet(key).encrypt(chunk))
             shutil.copy(temp_dir.name + file, file)
         use_time = datetime.datetime.now() - start_time
         print("Time costed : " + str(use_time))
 
-    @staticmethod
-    def decrypt(file):
+    def decrypt(self, file):
         """
         解密文件
         """
@@ -41,7 +39,7 @@ class SecMod:
                 key_len = t.read(2)
                 right_key = t.read(int.from_bytes(key_len, 'big'))
                 for chunk in chunked_file_reader(t, block_size=5592504):
-                    f.write(Fernet(right_key).decrypt(chunk))
+                    f.write(self.fernet.Fernet(right_key).decrypt(chunk))
                 shutil.copy(temp_dir.name + file, file)
             use_time = datetime.datetime.now() - start_time
             print("Time costed : " + str(use_time))
