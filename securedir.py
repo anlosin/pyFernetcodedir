@@ -63,6 +63,10 @@ class SecMod:
 def chunked_file_reader(file, block_size=1024 * 1024 * 4):
     """
     Generator function to read a file in chunks.
+    1 1398200
+    4 5592504
+    16 22369720
+    64 89478584
     """
     for chunk in iter(partial(file.read, block_size), b''):
         yield chunk
