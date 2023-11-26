@@ -50,7 +50,7 @@ class CryptMod:
                 right_key = input_file.read(key_len)
 
                 # Decrypt and write the file contents
-                for chunk in chunked_file_reader(input_file, block_size=5592504):
+                for chunk in chunked_file_reader(input_file, block_size=22369720):
                     if self.faster:
                         output_file.write(chunk)
                     else:
@@ -65,7 +65,7 @@ class CryptMod:
             pass
 
 
-def chunked_file_reader(file, block_size=1024 * 1024 * 4):
+def chunked_file_reader(file, block_size=1024 * 1024 * 16):
     """
     Generator function to read a file in chunks.
     1 1398200
