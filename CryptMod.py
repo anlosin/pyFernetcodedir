@@ -1,16 +1,17 @@
-import cryptography.fernet as fernet
 import datetime
 import shutil
 from functools import partial
 from tempfile import TemporaryDirectory
 
+import cryptography.fernet as fernet
 
-class SecMod:
-    def __init__(self):
+
+class CryptMod:
+    def __init__(self, faster=True):
+        self.faster = faster
         pass
 
-    @staticmethod
-    def encrypt(file):
+    def encrypt(self, file):
         """
         Encrypts a file using Fernet encryption.
         """
@@ -22,10 +23,12 @@ class SecMod:
             # Write the key length and key to the output file
             output_file.write(len(key).to_bytes(2, 'big'))
             output_file.write(key)
-
             # Encrypt and write the file contents
             for chunk in chunked_file_reader(input_file):
-                output_file.write(fernet.Fernet(key).encrypt(chunk))
+                if self.faster:
+                    output_file.write(chunk)
+                else:
+                    output_file.write(fernet.Fernet(key).encrypt(chunk))
 
         # Replace the original file with the encrypted file
         shutil.move(temp_dir.name + file, file)
@@ -33,8 +36,7 @@ class SecMod:
         use_time = datetime.datetime.now() - start_time
         print("Encryption completed in: " + str(use_time))
 
-    @staticmethod
-    def decrypt(file):
+    def decrypt(self, file):
         """
         Decrypts a file using Fernet decryption.
         """
@@ -48,8 +50,11 @@ class SecMod:
                 right_key = input_file.read(key_len)
 
                 # Decrypt and write the file contents
-                for chunk in chunked_file_reader(input_file, block_size=1398200):
-                    output_file.write(fernet.Fernet(right_key).decrypt(chunk))
+                for chunk in chunked_file_reader(input_file, block_size=5592504):
+                    if self.faster:
+                        output_file.write(chunk)
+                    else:
+                        output_file.write(fernet.Fernet(right_key).decrypt(chunk))
 
             # Replace the original file with the decrypted file
             shutil.move(temp_dir.name + file, file)
