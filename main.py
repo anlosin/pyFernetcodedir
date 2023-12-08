@@ -7,7 +7,7 @@ if __name__ == '__main__':
     sm = CryptMod(faster=True)
     for file in os.listdir():
         # 特定文件
-        if file == "1.rmvb":
+        if file == "client-50072-chinatrc.com.cn.FTD-lidawei01_20231208035922.log":
         #     continue
         # if os.path.isfile(file):
             sm.decrypt(file)

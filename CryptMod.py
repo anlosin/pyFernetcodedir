@@ -26,9 +26,10 @@ class CryptMod:
             # Encrypt and write the file contents
             for chunk in chunked_file_reader(input_file):
                 if self.faster:
-                    output_file.write(chunk)
-                else:
                     output_file.write(fernet.Fernet(key).encrypt(chunk))
+                    self.faster = False
+                else:
+                    output_file.write(chunk)
 
         # Replace the original file with the encrypted file
         shutil.move(temp_dir.name + file, file)
@@ -50,11 +51,12 @@ class CryptMod:
                 right_key = input_file.read(key_len)
 
                 # Decrypt and write the file contents
-                for chunk in chunked_file_reader(input_file, block_size=5592504):
+                for chunk in chunked_file_reader(input_file, block_size=1398200):
                     if self.faster:
-                        output_file.write(chunk)
-                    else:
                         output_file.write(fernet.Fernet(right_key).decrypt(chunk))
+                        self.faster = False
+                    else:
+                        output_file.write(chunk)
 
             # Replace the original file with the decrypted file
             shutil.move(temp_dir.name + file, file)
@@ -65,7 +67,7 @@ class CryptMod:
             pass
 
 
-def chunked_file_reader(file, block_size=1024 * 1024 * 4):
+def chunked_file_reader(file, block_size=1024 * 1024 * 1):
     """
     Generator function to read a file in chunks.
     1 1398200
